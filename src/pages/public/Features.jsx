@@ -1,57 +1,111 @@
+import React from "react";
 import PageWrapper from '@/components/layout/PageWrapper';
-import Card from '@/components/common/Card';
-import { motion } from 'framer-motion';
-import { Camera, Shield, MapPin, BarChart3, Bot, Megaphone, Recycle, Award, Users, Bell, Truck, BookOpen, Globe, Zap, Lock, Building2, ArrowRight, Leaf } from 'lucide-react';
-import Button from '@/components/common/Button';
-import { Link } from 'react-router-dom';
+import { TracingBeam } from "@/components/ui/tracing-beam";
+import { HeroGlobe } from "@/components/landing/HeroGlobe";
 
-const allFeatures = [
-  { icon: Camera, title: 'Smart Waste Reporting', desc: 'Capture waste with your camera, auto-tag GPS location, and file verified reports in seconds. The entire process from photo to submission takes less than 30 seconds.', color: 'from-civic-500 to-teal-500' },
-  { icon: Bot, title: 'AI Image Validation', desc: 'Gemini 1.5 Flash analyzes every uploaded image to detect waste, classify categories, and assess severity — preventing false reports and ensuring quality.', color: 'from-ocean-500 to-civic-500' },
-  { icon: Shield, title: 'Before & After Verification', desc: 'Authorities must upload resolution photos to prove cleanup. Citizens see both before and after images for transparent accountability.', color: 'from-teal-500 to-ocean-500' },
-  { icon: MapPin, title: 'Live Cleanliness Heatmap', desc: 'A real-time interactive map showing waste report density. Red zones for unresolved areas, green for clean — visible to everyone.', color: 'from-danger-500 to-warm-500' },
-  { icon: BarChart3, title: 'Ward-Level Analytics', desc: 'Deep analytics: complaint volumes, category distribution, resolution times, seasonal trends, and persistent hotspot identification.', color: 'from-ocean-500 to-ocean-600' },
-  { icon: Megaphone, title: 'Cleanup Campaigns', desc: 'NGOs and government bodies can create community cleanup drives. Citizens join, earn impact points, and climb the leaderboard.', color: 'from-warm-500 to-blush-500' },
-  { icon: Recycle, title: 'Facility Locator', desc: 'Find the nearest garbage center, e-waste bin, composting site, recycling plant, or biomedical waste handler in your area.', color: 'from-civic-500 to-civic-600' },
-  { icon: Award, title: 'Impact Score & Leaderboard', desc: 'Earn civic impact points for reporting, joining campaigns, and contributing to a cleaner city. Public leaderboard at ward and city level.', color: 'from-blush-500 to-warm-500' },
-  { icon: Bell, title: 'Real-time Notifications', desc: 'Push notifications for report status changes, campaign invites, resolution confirmations, and escalation alerts via Socket.io.', color: 'from-ocean-400 to-ocean-500' },
-  { icon: Truck, title: 'Bulk Pickup Scheduling', desc: 'Schedule pickups for furniture, construction debris, or medical waste. Choose your time slot and get confirmation.', color: 'from-teal-500 to-teal-600' },
-  { icon: Zap, title: 'Auto-Escalation', desc: 'Reports unresolved after 48 hours are automatically escalated to higher authorities. 96h+ goes to commissioner level.', color: 'from-warm-500 to-danger-500' },
-  { icon: BookOpen, title: 'Segregation Guides', desc: 'Interactive waste segregation education: what goes in which bin, how to prepare items, and common mistakes to avoid.', color: 'from-civic-400 to-teal-400' },
-  { icon: Globe, title: 'Multilingual Support', desc: 'Full Hindi and regional language support. The AI assistant responds in the user\'s language automatically.', color: 'from-ocean-500 to-teal-500' },
-  { icon: Lock, title: 'Role-Based Access', desc: 'Distinct experiences for citizens, municipal authorities, organizations, and platform administrators — each with tailored dashboards.', color: 'from-charcoal-700 to-navy-800' },
-  { icon: Users, title: 'Green Champions Program', desc: 'Top-performing citizens earn Green Champion status with extended dashboard access and community recognition.', color: 'from-civic-500 to-civic-600' },
-  { icon: Building2, title: 'Organization Accounts', desc: 'Apartments, offices, and restaurants get bulk waste compliance tracking, segregation audits, and incentive programs.', color: 'from-teal-600 to-ocean-600' },
+const content = [
+  {
+    badge: "Reporting",
+    title: "Smart Waste Reporting",
+    description: (
+      <>
+        <p className="mb-2">
+          Capture waste with your camera anywhere in the city. Our system auto-tags your GPS location and routes the complaint to the exact responsible ward officer — filing a verified report in less than 30 seconds.
+        </p>
+        <p>
+          Each report is securely logged, creating an immutable civic record that administrators use for accountability and resource planning.
+        </p>
+      </>
+    )
+  },
+  {
+    badge: "AI Validated",
+    title: "AI Image Verification",
+    description: (
+      <>
+        <p className="mb-2">
+          Powered by Gemini 1.5 Flash, every uploaded image is instantly analyzed to detect and classify waste. 
+        </p>
+        <p>
+          The system categorizes issues across 9 parameters (from Construction Debris to Medical Waste), filters out false reports, and assesses the severity level from LOW to CRITICAL.
+        </p>
+      </>
+    )
+  },
+  {
+    badge: "Transparency",
+    title: "Before & After Verification",
+    description: (
+      <>
+        <p className="mb-2">
+          Authorities are required to upload visual proof of resolution. Citizens receive both the original report image and the final cleanup confirmation.
+        </p>
+        <p>
+          This closes the feedback loop and provides transparent proof of municipal action, establishing public trust.
+        </p>
+      </>
+    )
+  },
+  {
+    badge: "Analytics",
+    title: "Ward-Level Analytics",
+    description: (
+      <>
+        <p>
+          A comprehensive dashboard tracking complaint volumes, resolution SLAs, and systemic metrics. Authorities can monitor average completion time and detect persistent hotspots automatically.
+        </p>
+      </>
+    )
+  }
 ];
 
 export default function Features() {
   return (
     <PageWrapper>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="relative min-h-screen">
+        {/* Globe Background */}
+        <div className="fixed inset-0 z-0 flex justify-end items-center pointer-events-none opacity-30 dark:opacity-20 translate-x-1/4">
+          <HeroGlobe />
+        </div>
+
+        {/* Ambient Blur Effects */}
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          <div className="absolute top-1/4 -left-32 w-[30rem] h-[30rem] bg-civic-500/20 rounded-full blur-[120px]" />
+          <div className="absolute top-1/3 right-0 w-[24rem] h-[24rem] bg-teal-500/15 rounded-full blur-[100px]" />
+          <div className="absolute bottom-1/4 left-1/3 w-[20rem] h-[20rem] bg-ocean-500/10 rounded-full blur-[100px]" />
+        </div>
+
+        <div className="relative z-10 py-20 text-[var(--text-primary)]">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-civic-500/10 text-civic-600 dark:text-civic-400 mb-4">
-            <Leaf size={12} /> Platform Features
-          </span>
-          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4">Everything You Need for Civic Accountability</h1>
-          <p className="text-lg text-[var(--text-secondary)]">A comprehensive platform that bridges the gap between citizen reporting and municipal action.</p>
+          <h1 className="text-4xl font-bold mb-4">Platform Features</h1>
+          <p className="text-lg text-[var(--text-secondary)]">Everything You Need for Civic Accountability</p>
         </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {allFeatures.map((feature, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.03 }}>
-              <Card className="p-5 h-full group">
-                <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                  <feature.icon size={20} className="text-white" />
+        <TracingBeam className="px-6">
+          <div className="max-w-2xl mx-auto antialiased pt-4 relative">
+            {content.map((item, index) => (
+              <div key={`content-${index}`} className="mb-10">
+                <h2 className="bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-full text-sm font-semibold w-fit px-4 py-1.5 mb-4">
+                  {item.badge}
+                </h2>
+                <p className="text-2xl font-bold mb-4">
+                  {item.title}
+                </p>
+                <div className="text-base text-[var(--text-secondary)] leading-relaxed prose prose-sm dark:prose-invert">
+                  {item?.image && (
+                    <img
+                      src={item.image}
+                      alt="thumbnail"
+                      height="1000"
+                      width="1000"
+                      className="rounded-lg mb-10 object-cover"
+                    />
+                  )}
+                  {item.description}
                 </div>
-                <h3 className="text-sm font-bold text-[var(--text-primary)] mb-2">{feature.title}</h3>
-                <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{feature.desc}</p>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="text-center mt-16">
-          <Link to="/signup"><Button variant="primary" size="xl" icon={Leaf} iconRight={ArrowRight}>Get Started Free</Button></Link>
+              </div>
+            ))}
+          </div>
+        </TracingBeam>
         </div>
       </div>
     </PageWrapper>

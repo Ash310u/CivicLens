@@ -1,57 +1,97 @@
-import { useState } from 'react';
+import React from "react";
 import PageWrapper from '@/components/layout/PageWrapper';
-import Card from '@/components/common/Card';
-import Button from '@/components/common/Button';
-import Input from '@/components/common/Input';
-import { TextArea } from '@/components/common/Input';
-import { Mail, Phone, MapPin, Send, MessageSquare, CheckCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { TracingBeam } from "@/components/ui/tracing-beam";
+import { HeroGlobe } from "@/components/landing/HeroGlobe";
+
+const content = [
+  {
+    badge: "Reach Out",
+    title: "Get in Touch with CivicLens",
+    description: (
+      <>
+        <p>
+          Whether you are a municipal body looking for integration, an NGO interested in platform partnerships, or a citizen needing support, our team is ready to assist.
+        </p>
+      </>
+    )
+  },
+  {
+    badge: "Government & Enterprise",
+    title: "Municipal Onboarding",
+    description: (
+      <>
+        <p className="mb-2">
+          Deploying CivicLens across your district involves tailored configurations for local ward hierarchies and SLA rules.
+        </p>
+        <p>
+          Reach out for a dedicated technical deep-dive and pilot deployment schedule.
+        </p>
+      </>
+    )
+  },
+  {
+    badge: "Community",
+    title: "Support & Policy Questions",
+    description: (
+      <>
+        <p className="mb-2">
+          Have questions about the Solid Waste Management Rules 2016, bulk generator compliance, or data policies? Our community liaisons are actively reviewing inquiries.
+        </p>
+        <p>
+          Contact: support@civiclens.in
+        </p>
+      </>
+    )
+  }
+];
 
 export default function Contact() {
-  const [submitted, setSubmitted] = useState(false);
   return (
     <PageWrapper>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4">Contact Us</h1>
-          <p className="text-lg text-[var(--text-secondary)]">Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+      <div className="relative min-h-screen">
+        {/* Globe Background */}
+        <div className="fixed inset-0 z-0 flex justify-end items-center pointer-events-none opacity-30 dark:opacity-20 translate-x-1/4">
+          <HeroGlobe />
         </div>
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="space-y-4">
-            {[
-              { icon: Mail, title: 'Email', text: 'support@civiclens.in' },
-              { icon: Phone, title: 'Phone', text: '+91 80 1234 5678' },
-              { icon: MapPin, title: 'Office', text: 'Koramangala, Bangalore, India' },
-            ].map((c, i) => (
-              <Card key={i} className="p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-civic-500/10 flex items-center justify-center"><c.icon size={18} className="text-civic-500" /></div>
-                <div><p className="text-xs text-[var(--text-tertiary)]">{c.title}</p><p className="text-sm font-medium text-[var(--text-primary)]">{c.text}</p></div>
-              </Card>
+
+        {/* Ambient Blur Effects */}
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          <div className="absolute top-1/4 -left-32 w-[30rem] h-[30rem] bg-civic-500/20 rounded-full blur-[120px]" />
+          <div className="absolute top-1/3 right-0 w-[24rem] h-[24rem] bg-teal-500/15 rounded-full blur-[100px]" />
+          <div className="absolute bottom-1/4 left-1/3 w-[20rem] h-[20rem] bg-ocean-500/10 rounded-full blur-[100px]" />
+        </div>
+
+        <div className="relative z-10 py-20 text-[var(--text-primary)]">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
+          <p className="text-lg text-[var(--text-secondary)]">We'd love to hear from you</p>
+        </div>
+        <TracingBeam className="px-6">
+          <div className="max-w-2xl mx-auto antialiased pt-4 relative">
+            {content.map((item, index) => (
+              <div key={`content-${index}`} className="mb-10">
+                <h2 className="bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-full text-sm font-semibold w-fit px-4 py-1.5 mb-4">
+                  {item.badge}
+                </h2>
+                <p className="text-2xl font-bold mb-4">
+                  {item.title}
+                </p>
+                <div className="text-base text-[var(--text-secondary)] leading-relaxed prose prose-sm dark:prose-invert">
+                  {item?.image && (
+                    <img
+                      src={item.image}
+                      alt="thumbnail"
+                      height="1000"
+                      width="1000"
+                      className="rounded-lg mb-10 object-cover"
+                    />
+                  )}
+                  {item.description}
+                </div>
+              </div>
             ))}
           </div>
-          <div className="lg:col-span-2">
-            {submitted ? (
-              <Card className="p-8 text-center">
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}>
-                  <CheckCircle size={48} className="text-civic-500 mx-auto mb-4" />
-                </motion.div>
-                <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">Message Sent!</h3>
-                <p className="text-[var(--text-secondary)]">We'll get back to you within 24 hours.</p>
-              </Card>
-            ) : (
-              <Card className="p-6">
-                <form onSubmit={e => { e.preventDefault(); setSubmitted(true); }} className="space-y-4">
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <Input label="Name" placeholder="Your name" required />
-                    <Input label="Email" type="email" placeholder="you@example.com" required />
-                  </div>
-                  <Input label="Subject" placeholder="How can we help?" required />
-                  <TextArea label="Message" placeholder="Tell us more..." />
-                  <Button type="submit" variant="primary" size="lg" icon={Send} className="w-full">Send Message</Button>
-                </form>
-              </Card>
-            )}
-          </div>
+        </TracingBeam>
         </div>
       </div>
     </PageWrapper>

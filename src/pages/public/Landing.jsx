@@ -12,6 +12,7 @@ import {
   Building2, Truck, BookOpen, ChevronRight, Star, Leaf
 } from 'lucide-react';
 import { HeroGlobe } from '@/components/landing/HeroGlobe';
+import { TimelineSection } from '@/components/landing/TimelineSection';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
@@ -107,15 +108,6 @@ export default function Landing() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
-              <motion.span
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-civic-500/10 text-civic-600 dark:text-civic-400 border border-civic-500/20 mb-6"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-civic-500 animate-pulse" />
-                AI-Powered Civic Platform
-              </motion.span>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[var(--text-primary)] leading-[1.1] mb-6">
                 Smart Waste Reporting for{' '}
@@ -170,204 +162,7 @@ export default function Landing() {
         </motion.div>
       </section>
 
-      {/* ===== PROBLEM ===== */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-secondary)]">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading
-            tag="The Problem"
-            title="Cities Struggle with Waste Accountability"
-            description="Overflowing bins, illegal dumping, slow municipal response — citizens report, nothing happens. CivicLens changes that with AI-driven verification and transparent tracking."
-          />
-          <div className="grid md:grid-cols-3 gap-6 mt-8">
-            {[
-              { stat: '62%', label: 'of waste complaints go unresolved', icon: '😟' },
-              { stat: '3.5 days', label: 'average wait for cleanup response', icon: '⏳' },
-              { stat: '0%', label: 'of citizens can track complaint status', icon: '🔍' },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="glass-card p-6 text-center"
-              >
-                <span className="text-3xl mb-3 block">{item.icon}</span>
-                <p className="text-3xl font-bold text-[var(--text-primary)] mb-2">{item.stat}</p>
-                <p className="text-sm text-[var(--text-secondary)]">{item.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== HOW IT WORKS ===== */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading
-            tag="How It Works"
-            title="From Report to Resolution in 4 Steps"
-            description="A seamless end-to-end workflow that turns waste complaints into verified civic action."
-          />
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {howItWorks.map((step, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                className="relative"
-              >
-                <Card className="p-6 text-center h-full">
-                  <div className="text-5xl font-black text-civic-500/10 dark:text-civic-400/10 mb-2">{step.step}</div>
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-civic-500 to-teal-500 flex items-center justify-center mx-auto mb-4">
-                    <step.icon size={22} className="text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2">{step.title}</h3>
-                  <p className="text-sm text-[var(--text-secondary)]">{step.desc}</p>
-                </Card>
-                {i < 3 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-3 z-10 text-[var(--text-tertiary)]">
-                    <ChevronRight size={20} />
-                  </div>
-                )}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== FEATURES ===== */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-secondary)]">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading
-            tag="Features"
-            title="Everything You Need for Civic Accountability"
-            description="A comprehensive platform that bridges the gap between citizen reporting and municipal action."
-          />
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"
-          >
-            {features.map((feature, i) => (
-              <motion.div key={i} variants={fadeInUp}>
-                <Card className="p-5 h-full group">
-                  <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <feature.icon size={20} className="text-white" />
-                  </div>
-                  <h3 className="text-base font-bold text-[var(--text-primary)] mb-2">{feature.title}</h3>
-                  <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{feature.desc}</p>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ===== STAKEHOLDERS ===== */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading
-            tag="Who It's For"
-            title="Built for Every Stakeholder"
-            description="Role-based experiences designed for citizens, authorities, organizations, and government bodies."
-          />
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {stakeholders.map((s, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className="p-6 h-full text-center">
-                  <div className={`w-14 h-14 rounded-2xl bg-${s.color}-500/10 flex items-center justify-center mx-auto mb-4`}>
-                    <s.icon size={24} className={`text-${s.color}-500`} />
-                  </div>
-                  <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2">{s.title}</h3>
-                  <p className="text-sm text-[var(--text-secondary)]">{s.desc}</p>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== STATS ===== */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-civic-600 to-teal-600 dark:from-navy-800 dark:to-charcoal-800 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvc3ZnPg==')] opacity-50" />
-        <div className="relative max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Impact That Speaks</h2>
-            <p className="text-white/70 text-lg">Real numbers from cities using CivicLens</p>
-          </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {stats.map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="text-center p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10"
-              >
-                <p className="text-3xl sm:text-4xl font-extrabold text-white mb-1">
-                  <AnimatedCounter end={stat.value} />{stat.suffix}
-                </p>
-                <p className="text-sm text-white/70">{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== TESTIMONIALS ===== */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading
-            tag="Testimonials"
-            title="Trusted by Citizens & Officials"
-            description="See what people are saying about CivicLens."
-          />
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { name: 'Ananya K.', role: 'Citizen, Koramangala', quote: 'I reported illegal dumping near my apartment. Within 18 hours it was cleaned. The before/after photos gave me real confidence.' },
-              { name: 'Rajesh M.', role: 'Ward Officer, BBMP', quote: 'CivicLens has cut our average complaint resolution time by 40%. The AI classification saves us hours of manual sorting.' },
-              { name: 'Dr. Priya S.', role: 'GreenTech NGO', quote: 'Our cleanup campaigns now have 3x more participation thanks to CivicLens. The impact scoring system really motivates people.' },
-            ].map((t, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className="p-6 h-full">
-                  <div className="flex items-center gap-1 mb-4">
-                    {[1,2,3,4,5].map(s => <Star key={s} size={14} className="fill-warning-400 text-warning-400" />)}
-                  </div>
-                  <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-5 italic">"{t.quote}"</p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-civic-400 to-teal-500 flex items-center justify-center text-white text-sm font-bold">
-                      {t.name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--text-primary)]">{t.name}</p>
-                      <p className="text-xs text-[var(--text-tertiary)]">{t.role}</p>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
+      <TimelineSection />
       {/* ===== BOTTOM CTA ===== */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-secondary)]">
         <div className="max-w-3xl mx-auto text-center">

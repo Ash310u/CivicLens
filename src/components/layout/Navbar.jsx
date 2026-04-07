@@ -9,12 +9,12 @@ import {
 } from 'lucide-react';
 import Button from '@/components/common/Button';
 import clsx from 'clsx';
+import logoUrl from '../../../icons/logo.png';
 
 const publicLinks = [
   { label: 'Features', href: '/features' },
   { label: 'How it Works', href: '/how-it-works' },
-  { label: 'Campaigns', href: '/campaigns' },
-  { label: 'Heatmap', href: '/heatmap' },
+
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];
@@ -62,9 +62,11 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-civic-500 to-teal-500 flex items-center justify-center shadow-sm group-hover:shadow-glow-green transition-shadow duration-300">
-                <Leaf size={18} className="text-white" />
-              </div>
+              <img 
+                src={logoUrl} 
+                alt="CivicLens Logo" 
+                className="w-10 h-10 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+              />
               <span className="text-xl font-bold text-[var(--text-primary)]">
                 Civic<span className="text-gradient">Lens</span>
               </span>

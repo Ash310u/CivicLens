@@ -1,59 +1,114 @@
+import React from "react";
 import PageWrapper from '@/components/layout/PageWrapper';
-import Card from '@/components/common/Card';
-import Button from '@/components/common/Button';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Camera, Zap, TrendingUp, CheckCircle, ArrowRight, Leaf } from 'lucide-react';
+import { TracingBeam } from "@/components/ui/tracing-beam";
+import { HeroGlobe } from "@/components/landing/HeroGlobe";
 
-const steps = [
-  { step: 1, icon: Camera, title: 'Citizen Reports Waste', points: ['Open CivicLens app or web dashboard', 'Take a photo of waste spotted in public', 'GPS location is auto-tagged', 'Submit with optional description'], color: 'from-civic-500 to-teal-500' },
-  { step: 2, icon: Zap, title: 'AI Validates & Classifies', points: ['Gemini 1.5 Flash analyzes the image', 'Detects waste presence with confidence score', 'Classifies into 9 waste categories', 'Assigns severity: LOW to CRITICAL'], color: 'from-ocean-500 to-civic-500' },
-  { step: 3, icon: TrendingUp, title: 'Authority Takes Action', points: ['Report routed to responsible department', 'Ward officer receives push notification', 'Task assigned to cleanup team', 'SLA timer begins (48h max)'], color: 'from-warm-500 to-blush-500' },
-  { step: 4, icon: CheckCircle, title: 'Verified Resolution', points: ['Cleanup team completes the work', 'Authority uploads "after" photo', 'Citizen receives before/after confirmation', 'Heatmap turns green, impact score updated'], color: 'from-teal-500 to-civic-500' },
+const content = [
+  {
+    badge: "Step 1",
+    title: "Citizen Reports Waste",
+    description: (
+      <>
+        <p className="mb-2">
+          It starts with a simple action. Whether you are using the mobile app or web dashboard, take a live photo of dumped waste or uncollected garbage in public spaces.
+        </p>
+        <p>
+          The platform automatically attaches precise geo-coordinates and timestamps, passing the initial claim to the AI engine for validation.
+        </p>
+      </>
+    )
+  },
+  {
+    badge: "Step 2",
+    title: "AI Validates & Classifies",
+    description: (
+      <>
+        <p className="mb-2">
+          The AI engine analyzes the visual evidence to extract the waste category (like plastic waste or e-waste). It enforces strict moderation, rejecting images lacking clear evidence of waste.
+        </p>
+        <p>
+          If validated, the AI assigns a preliminary severity rating to assist with triaging.
+        </p>
+      </>
+    )
+  },
+  {
+    badge: "Step 3",
+    title: "Real-Time Triaging",
+    description: (
+      <>
+        <p className="mb-2">
+          Based on the geo-tagged precinct, the report immediately notifies the assigned municipal ward authority. They review the AI's classification and dispatch local cleanup teams.
+        </p>
+        <p>
+          Simultaneously, a 48-hour SLA timer begins to ensure the report does not linger unresolved.
+        </p>
+      </>
+    )
+  },
+  {
+    badge: "Step 4",
+    title: "Auto-Escalation Protocol",
+    description: (
+      <>
+        <p className="mb-2">
+          If local authorities fail to mark a report resolved within 48 hours, the system auto-escalates it to the Zonal Officer.
+        </p>
+        <p>
+          Beyond 96 hours without resolution, it reaches the Municipal Commissioner tier, tagging the persistent area as an official administrative hotspot.
+        </p>
+      </>
+    )
+  }
 ];
 
 export default function HowItWorks() {
   return (
     <PageWrapper>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="relative min-h-screen">
+        {/* Globe Background */}
+        <div className="fixed inset-0 z-0 flex justify-end items-center pointer-events-none opacity-30 dark:opacity-20 translate-x-1/4">
+          <HeroGlobe />
+        </div>
+
+        {/* Ambient Blur Effects */}
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          <div className="absolute top-1/4 -left-32 w-[30rem] h-[30rem] bg-civic-500/20 rounded-full blur-[120px]" />
+          <div className="absolute top-1/3 right-0 w-[24rem] h-[24rem] bg-teal-500/15 rounded-full blur-[100px]" />
+          <div className="absolute bottom-1/4 left-1/3 w-[20rem] h-[20rem] bg-ocean-500/10 rounded-full blur-[100px]" />
+        </div>
+
+        <div className="relative z-10 py-20 text-[var(--text-primary)]">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-civic-500/10 text-civic-600 dark:text-civic-400 mb-4">
-            <Leaf size={12} /> How CivicLens Works
-          </span>
-          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4">From Report to Resolution</h1>
-          <p className="text-lg text-[var(--text-secondary)]">A transparent, AI-powered pipeline that turns citizen complaints into verified civic action.</p>
+          <h1 className="text-4xl font-bold mb-4">How CivicLens Works</h1>
+          <p className="text-lg text-[var(--text-secondary)]">From Report to Resolution</p>
         </div>
-
-        <div className="space-y-8">
-          {steps.map((step, i) => (
-            <motion.div key={i} initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}>
-              <Card className="p-6 sm:p-8">
-                <div className={`flex flex-col sm:flex-row gap-6 ${i % 2 === 1 ? 'sm:flex-row-reverse' : ''}`}>
-                  <div className="flex-shrink-0">
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center`}>
-                      <step.icon size={28} className="text-white" />
-                    </div>
-                    <p className="text-4xl font-black text-[var(--text-tertiary)]/20 mt-2">0{step.step}</p>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-[var(--text-primary)] mb-3">{step.title}</h3>
-                    <ul className="space-y-2">
-                      {step.points.map((point, j) => (
-                        <li key={j} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
-                          <CheckCircle size={14} className="text-civic-500 mt-0.5 flex-shrink-0" />
-                          {point}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+        <TracingBeam className="px-6">
+          <div className="max-w-2xl mx-auto antialiased pt-4 relative">
+            {content.map((item, index) => (
+              <div key={`content-${index}`} className="mb-10">
+                <h2 className="bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-full text-sm font-semibold w-fit px-4 py-1.5 mb-4">
+                  {item.badge}
+                </h2>
+                <p className="text-2xl font-bold mb-4">
+                  {item.title}
+                </p>
+                <div className="text-base text-[var(--text-secondary)] leading-relaxed prose prose-sm dark:prose-invert">
+                  {item?.image && (
+                    <img
+                      src={item.image}
+                      alt="thumbnail"
+                      height="1000"
+                      width="1000"
+                      className="rounded-lg mb-10 object-cover"
+                    />
+                  )}
+                  {item.description}
                 </div>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="text-center mt-12">
-          <Link to="/signup"><Button variant="primary" size="xl" icon={Leaf} iconRight={ArrowRight}>Start Reporting</Button></Link>
+              </div>
+            ))}
+          </div>
+        </TracingBeam>
         </div>
       </div>
     </PageWrapper>

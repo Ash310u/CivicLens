@@ -26,8 +26,7 @@ import CitizenDashboard from '@/pages/citizen/Dashboard';
 import ReportWaste from '@/pages/citizen/ReportWaste';
 import MyReports from '@/pages/citizen/MyReports';
 import ReportDetails from '@/pages/citizen/ReportDetails';
-import Heatmap from '@/pages/citizen/Heatmap';
-import Campaigns from '@/pages/citizen/Campaigns';
+
 import DisposalLocator from '@/pages/citizen/DisposalLocator';
 import BulkPickup from '@/pages/citizen/BulkPickup';
 import AIAssistant from '@/pages/citizen/AIAssistant';
@@ -65,8 +64,7 @@ function AppRoutes() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/faq" element={<FAQ />} />
-        <Route path="/campaigns" element={<Campaigns />} />
-        <Route path="/heatmap" element={<Heatmap />} />
+
       </Route>
 
       {/* Auth Pages */}
