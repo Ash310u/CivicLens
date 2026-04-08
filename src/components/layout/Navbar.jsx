@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
-import { 
+import {
   Sun, Moon, Menu, X, ChevronDown,
   Leaf, LogIn, UserPlus, LayoutDashboard, LogOut
 } from 'lucide-react';
@@ -62,9 +62,9 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to={ROUTES.home} className="flex items-center gap-2.5 group">
-              <img 
-                src={logoUrl} 
-                alt="CivicLens Logo" 
+              <img
+                src={logoUrl}
+                alt="CivicLens Logo"
                 className="w-10 h-10 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
               />
               <span className="text-xl font-bold text-[var(--text-primary)]">
@@ -73,7 +73,7 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Nav Links */}
-            <div 
+            <div
               className="hidden lg:flex items-center gap-1 relative"
               onMouseLeave={() => setHoveredLink(null)}
             >

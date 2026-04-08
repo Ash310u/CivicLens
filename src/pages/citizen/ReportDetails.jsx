@@ -1,17 +1,19 @@
 import { useParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import PageWrapper from '@/components/layout/PageWrapper';
 import Card from '@/components/common/Card';
-import Button from '@/components/common/Button';
 import StatusChip from '@/components/common/StatusChip';
 import { MOCK_REPORTS, WASTE_CATEGORIES } from '@/data/mockData';
-import { ArrowLeft, MapPin, Clock, User, Building2, AlertTriangle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, MapPin, User, AlertTriangle, CheckCircle } from 'lucide-react';
 import { ROUTES } from '@/lib/routes';
 
 export default function ReportDetails() {
   const { id } = useParams();
   const report = MOCK_REPORTS.find(r => r.id === id) || MOCK_REPORTS[0];
   const cat = WASTE_CATEGORIES[report.category];
+  const addressText = report.addressText || report.address_text || report.location || report.ward_id || 'N/A';
+  const latitude = Number(report.latitude ?? report.gps_lat);
+  const longitude = Number(report.longitude ?? report.gps_lng);
+  const hasCoordinates = Number.isFinite(latitude) && Number.isFinite(longitude);
 
   const timeline = [
     { time: report.created_at, label: 'Report Filed', desc: `${report.citizen_name} reported ${cat?.label?.toLowerCase()}`, icon: CheckCircle, color: 'text-civic-500' },
@@ -46,7 +48,7 @@ export default function ReportDetails() {
               {[
                 { label: 'Category', value: cat?.label, icon: '♻️' },
                 { label: 'Severity', value: report.severity, icon: '⚡' },
-                { label: 'Ward', value: report.ward_id, icon: '🏛️' },
+                { label: 'Address', value: addressText, icon: '📍' },
                 { label: 'Department', value: cat?.department, icon: '🏢' },
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-[var(--bg-secondary)]">
@@ -65,7 +67,14 @@ export default function ReportDetails() {
             <div className="h-64 rounded-xl bg-[var(--bg-tertiary)] flex items-center justify-center">
               <div className="text-center">
                 <MapPin size={32} className="text-[var(--text-tertiary)] mx-auto mb-2" />
-                <p className="text-sm text-[var(--text-secondary)]">Location: {report.gps_lat.toFixed(4)}, {report.gps_lng.toFixed(4)}</p>
+                <p className="text-sm text-[var(--text-secondary)]">
+                  {hasCoordinates
+                    ? `Location: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
+                    : `Location: ${addressText}`}
+                </p>
+                {hasCoordinates ? (
+                  <p className="text-xs text-[var(--text-tertiary)] mt-1">{addressText}</p>
+                ) : null}
                 <p className="text-xs text-[var(--text-tertiary)]">Map view available in full deployment</p>
               </div>
             </div>

@@ -235,7 +235,6 @@ export default function ReportWaste({ embedded = false }) {
       addressText: (form.location || '').trim(),
       description: (form.description || '').trim(),
       category: apiCategory,
-      category: apiCategory,
       severity: (form.severity || 'MEDIUM').toLowerCase(),
       status: 'pending',
       aiConfidenceScore: mockAiConfidence(validation),

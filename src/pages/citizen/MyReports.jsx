@@ -1,21 +1,66 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useDispatch, useSelector } from 'react-redux';
 import PageWrapper from '@/components/layout/PageWrapper';
 import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
 import StatusChip from '@/components/common/StatusChip';
 import EmptyState from '@/components/common/EmptyState';
-import { MOCK_REPORTS, WASTE_CATEGORIES } from '@/data/mockData';
+import { WASTE_CATEGORIES } from '@/data/mockData';
 import { Search, ArrowRight, Camera, Clock } from 'lucide-react';
 import { ROUTES } from '@/lib/routes';
+import { useAuth } from '@/context/AuthContext';
+import { useGetReportsQuery } from '@/store/api/reportsApi';
+import {
+  selectCachedReports,
+  setReportsCache,
+} from '@/store/slices/reportsSlice';
 
 const statusFilters = ['all', 'pending', 'in-progress', 'resolved', 'overdue', 'escalated'];
 
+function normalizeReport(report) {
+  const id = report?.id ?? report?.reportId ?? report?._id ?? null;
+  const categoryRaw = report?.category || report?.garbageType || 'mixed';
+  const category = String(categoryRaw).replace('-', '_').toLowerCase();
+
+  return {
+    id: id != null ? String(id) : 'UNKNOWN',
+    status: report?.status || 'pending',
+    description: report?.description || report?.addressText || 'Waste report',
+    category,
+    severity: String(report?.severity || 'medium').toUpperCase(),
+    created_at: report?.created_at || report?.createdAt || new Date().toISOString(),
+    userId: report?.userId ?? report?.user_id ?? report?.citizen_id ?? null,
+  };
+}
+
 export default function MyReports({ embedded = false }) {
+  const dispatch = useDispatch();
+  const { user } = useAuth();
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
-  const myReports = MOCK_REPORTS.filter(r => r.citizen_id === '1' || filter === 'all');
+  const cachedReports = useSelector(selectCachedReports);
+  const { data: reportsData = [], isFetching, isError } = useGetReportsQuery();
+
+  useEffect(() => {
+    const list = Array.isArray(reportsData)
+      ? reportsData
+      : Array.isArray(reportsData?.data)
+        ? reportsData.data
+        : [];
+
+    if (list.length > 0) {
+      dispatch(setReportsCache(list.map(normalizeReport)));
+    }
+  }, [dispatch, reportsData]);
+
+  const myReports = useMemo(() => {
+    if (!user?.id) return cachedReports;
+    const currentUserId = String(user.id);
+    return cachedReports.filter((r) => String(r.userId) === currentUserId);
+  }, [cachedReports, user?.id]);
+
   const filtered = myReports.filter(r => {
     if (filter !== 'all' && r.status !== filter) return false;
     if (search && !r.description.toLowerCase().includes(search.toLowerCase()) && !r.id.toLowerCase().includes(search.toLowerCase())) return false;
@@ -30,7 +75,7 @@ export default function MyReports({ embedded = false }) {
             My Reports
           </h1>
           <p className={`text-[var(--text-secondary)] ${embedded ? 'text-xs sm:text-sm' : ''}`}>
-            {MOCK_REPORTS.length} total reports
+            {myReports.length} total reports
           </p>
         </div>
         {!embedded && (
@@ -78,6 +123,16 @@ export default function MyReports({ embedded = false }) {
       </div>
 
       {/* Report List */}
+      {isFetching && myReports.length === 0 ? (
+        <div className="text-sm text-[var(--text-secondary)] py-4">Loading reports...</div>
+      ) : null}
+
+      {isError && myReports.length === 0 ? (
+        <div className="text-sm text-danger-600 dark:text-danger-400 py-4">
+          Could not load reports right now.
+        </div>
+      ) : null}
+
       {filtered.length === 0 ? (
         <EmptyState
           title="No reports found"
