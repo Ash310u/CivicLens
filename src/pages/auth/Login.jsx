@@ -37,7 +37,10 @@ export default function Login() {
     if (result.success) {
       navigate(ROLE_HOME_PATHS[result.user.role] || ROUTES.citizen.home);
     } else {
-      setError('Invalid credentials. Try: citizen@civic.lens / authority@civic.lens / admin@civic.lens / org@civic.lens');
+      setError(
+        result.error ||
+          'Invalid credentials',
+      );
     }
   };
 

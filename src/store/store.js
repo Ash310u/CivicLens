@@ -1,6 +1,7 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { baseApi } from '@/store/api/baseApi';
+import '@/store/api/usersApi';
 
 const authSlice = createSlice({
   name: 'auth',
