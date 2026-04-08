@@ -7,12 +7,12 @@ import Button from '@/components/common/Button';
 import StatusChip from '@/components/common/StatusChip';
 import EmptyState from '@/components/common/EmptyState';
 import { MOCK_REPORTS, WASTE_CATEGORIES } from '@/data/mockData';
-import { Filter, Search, ArrowRight, Camera, Clock, MapPin } from 'lucide-react';
+import { Search, ArrowRight, Camera, Clock } from 'lucide-react';
 import { ROUTES } from '@/lib/routes';
 
 const statusFilters = ['all', 'pending', 'in-progress', 'resolved', 'overdue', 'escalated'];
 
-export default function MyReports() {
+export default function MyReports({ embedded = false }) {
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const myReports = MOCK_REPORTS.filter(r => r.citizen_id === '1' || filter === 'all');
@@ -22,36 +22,50 @@ export default function MyReports() {
     return true;
   });
 
-  return (
-    <PageWrapper>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+  const inner = (
+    <>
+      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 ${embedded ? 'mb-3' : 'mb-6'}`}>
         <div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-1">My Reports</h1>
-          <p className="text-[var(--text-secondary)]">{MOCK_REPORTS.length} total reports</p>
+          <h1 className={`font-bold text-[var(--text-primary)] ${embedded ? 'text-lg sm:text-xl mb-0' : 'text-2xl mb-1'}`}>
+            My Reports
+          </h1>
+          <p className={`text-[var(--text-secondary)] ${embedded ? 'text-xs sm:text-sm' : ''}`}>
+            {MOCK_REPORTS.length} total reports
+          </p>
         </div>
-        <Link to={ROUTES.citizen.report}>
-          <Button variant="primary" size="md" icon={Camera}>New Report</Button>
-        </Link>
+        {!embedded && (
+          <Link to={ROUTES.citizen.report}>
+            <Button variant="primary" size="md" icon={Camera}>New Report</Button>
+          </Link>
+        )}
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <div className="relative flex-1 max-w-sm">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" />
+      {/* Filters — embedded: always stack so search + focus ring never collide with chips in narrow column */}
+      <div
+        className={`flex gap-3 ${embedded ? 'mb-3 flex-col' : 'mb-6 flex-col md:flex-row md:items-start md:gap-4'}`}
+      >
+        <div className={`relative w-full min-w-0 ${embedded ? '' : 'md:flex-1 md:max-w-md'}`}>
+          <Search
+            size={16}
+            className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-[var(--text-tertiary)]"
+            aria-hidden
+          />
           <input
-            type="text"
+            type="search"
             placeholder="Search reports..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 text-sm bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none focus:border-civic-500 focus:ring-2 focus:ring-civic-500/20 transition-all"
+            className={`box-border w-full pl-9 pr-3 sm:pr-4 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none transition-colors focus-visible:border-civic-500 focus-visible:ring-2 focus-visible:ring-civic-500/25 focus-visible:ring-inset ${embedded ? 'py-2 text-xs sm:text-sm' : 'py-2.5 text-sm'}`}
           />
         </div>
-        <div className="flex gap-1.5 flex-wrap">
+        <div className="flex w-full min-w-0 flex-wrap gap-1.5 sm:gap-2 md:flex-1 md:justify-start">
           {statusFilters.map(s => (
             <button
               key={s}
               onClick={() => setFilter(s)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors ${
+              className={`rounded-lg font-medium capitalize transition-colors flex-shrink-0 ${
+                embedded ? 'px-2 py-1 text-[10px] sm:text-xs' : 'px-3 py-1.5 text-xs'
+              } ${
                 filter === s
                   ? 'bg-civic-500 text-white'
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
@@ -65,9 +79,16 @@ export default function MyReports() {
 
       {/* Report List */}
       {filtered.length === 0 ? (
-        <EmptyState title="No reports found" description="Try adjusting your filters or create a new report." actionLabel="Report Waste" onAction={() => {}} />
+        <EmptyState
+          title="No reports found"
+          description="Try adjusting your filters or create a new report."
+          actionLabel="Report Waste"
+          onAction={() => {
+            document.getElementById('report-waste')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }}
+        />
       ) : (
-        <div className="space-y-3">
+        <div className={`space-y-2 sm:space-y-3 ${embedded ? 'max-h-[min(55vh,520px)] overflow-y-auto pr-1 -mr-1 scrollbar-thin' : ''}`}>
           {filtered.map((report, i) => (
             <motion.div
               key={report.id}
@@ -76,9 +97,9 @@ export default function MyReports() {
               transition={{ delay: i * 0.03 }}
             >
               <Link to={ROUTES.citizen.reportDetails(report.id)}>
-                <Card className="p-4 sm:p-5 cursor-pointer">
-                  <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 rounded-xl bg-[var(--bg-tertiary)] flex items-center justify-center flex-shrink-0 text-2xl">
+                <Card className={`cursor-pointer ${embedded ? 'p-3 sm:p-4' : 'p-4 sm:p-5'}`}>
+                  <div className={`flex items-start ${embedded ? 'gap-3' : 'gap-4'}`}>
+                    <div className={`rounded-xl bg-[var(--bg-tertiary)] flex items-center justify-center flex-shrink-0 ${embedded ? 'w-11 h-11 text-lg sm:w-14 sm:h-14 sm:text-xl' : 'w-16 h-16 text-2xl'}`}>
                       {WASTE_CATEGORIES[report.category]?.icon || '🗑️'}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -99,7 +120,7 @@ export default function MyReports() {
                         </span>
                       </div>
                     </div>
-                    <ArrowRight size={16} className="text-[var(--text-tertiary)] flex-shrink-0 mt-4" />
+                    <ArrowRight size={embedded ? 14 : 16} className="text-[var(--text-tertiary)] flex-shrink-0 mt-2 sm:mt-4" />
                   </div>
                 </Card>
               </Link>
@@ -107,6 +128,8 @@ export default function MyReports() {
           ))}
         </div>
       )}
-    </PageWrapper>
+    </>
   );
+
+  return embedded ? inner : <PageWrapper>{inner}</PageWrapper>;
 }

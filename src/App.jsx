@@ -23,9 +23,7 @@ import Signup from '@/pages/auth/Signup';
 import ForgotPassword from '@/pages/auth/ForgotPassword';
 
 // Citizen Pages
-import CitizenDashboard from '@/pages/citizen/Dashboard';
-import ReportWaste from '@/pages/citizen/ReportWaste';
-import MyReports from '@/pages/citizen/MyReports';
+import TopDashboard from '@/pages/citizen/TopDashboard';
 import ReportDetails from '@/pages/citizen/ReportDetails';
 
 import DisposalLocator from '@/pages/citizen/DisposalLocator';
@@ -77,10 +75,8 @@ function AppRoutes() {
 
       {/* Citizen Dashboard */}
       <Route element={<ProtectedRoute allowedRoles={['citizen']}><DashboardLayout /></ProtectedRoute>}>
-        <Route path={ROUTES.citizen.home} element={<CitizenDashboard />} />
-        <Route path={ROUTES.citizen.report} element={<ReportWaste />} />
-        <Route path={ROUTES.citizen.reports} element={<MyReports />} />
         <Route path={ROUTES.citizen.reportDetails()} element={<ReportDetails />} />
+        <Route path={ROUTES.citizen.home} element={<TopDashboard />} />
         <Route path={ROUTES.citizen.disposal} element={<DisposalLocator />} />
         <Route path={ROUTES.citizen.bulkPickup} element={<BulkPickup />} />
         <Route path={ROUTES.citizen.assistant} element={<AIAssistant />} />

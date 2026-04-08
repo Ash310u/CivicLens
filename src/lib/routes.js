@@ -12,8 +12,8 @@ export const ROUTES = {
   forgotPassword: '/forgot-password',
   citizen: {
     home: '/citizen',
-    report: '/citizen/report',
-    reports: '/citizen/reports',
+    // report: '/citizen/report',
+    // reports: '/citizen/reports',
     reportDetails: (id = ':id') => `/citizen/reports/${id}`,
     disposal: '/citizen/disposal',
     bulkPickup: '/citizen/bulk-pickup',
