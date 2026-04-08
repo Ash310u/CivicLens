@@ -28,6 +28,7 @@ export default function Signup() {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', confirmPassword: '', role: 'citizen', city: 'Bangalore', ward: 'W-14' });
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const validateStep1 = () => {
@@ -54,12 +55,15 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep2()) return;
+    setSubmitError('');
     setLoading(true);
     const result = await signup(form);
     setLoading(false);
     if (result.success) {
       navigate(ROLE_HOME_PATHS[result.user.role] || ROUTES.citizen.home);
+      return;
     }
+    setSubmitError(result.error || 'Unable to create account right now.');
   };
 
   const update = (field, value) => {
@@ -146,6 +150,8 @@ export default function Signup() {
               {errors.confirmPassword && <p className="text-xs text-danger-500 font-medium">{errors.confirmPassword}</p>}
               
               <input type="text" placeholder="City" className="brutal-auth-input" value={form.city} onChange={e => update('city', e.target.value)} />
+
+              {submitError && <p className="text-sm text-danger-500 font-medium w-full">{submitError}</p>}
               
               <label className="flex items-start gap-2 text-sm text-[#323232] font-semibold w-full mt-2">
                 <input type="checkbox" required className="mt-1 w-4 h-4 accent-[#323232]" />
