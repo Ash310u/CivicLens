@@ -29,7 +29,10 @@ export default function Profile() {
             </div>
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-[var(--text-primary)]">{user?.name || 'Citizen'}</h1>
-              <p className="text-sm text-[var(--text-secondary)]">{user?.email} · Ward {user?.ward_id}</p>
+              <p className="text-sm text-[var(--text-secondary)]">
+                {user?.email}
+                {user?.address ? ` · ${user.address}` : ''}
+              </p>
               <div className="flex items-center gap-2 mt-2">
                 <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-civic-500/10 text-civic-600 dark:text-civic-400">🏆 Active Reporter</span>
                 <span className="text-xs text-[var(--text-tertiary)]">#4 in Ward 14 Leaderboard</span>

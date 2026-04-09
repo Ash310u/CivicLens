@@ -50,8 +50,8 @@ export default function Heatmap() {
   const [selectedReport, setSelectedReport] = useState(null);
 
   const filtered = useMemo(() => {
-    return MOCK_REPORTS.filter(r => {
-      if (wardFilter !== 'All' && r.ward_id !== wardFilter) return false;
+    return MOCK_REPORTS.filter((r) => {
+      if (wardFilter !== 'All' && r.address !== wardFilter) return false;
       if (categoryFilter !== 'All' && r.category !== categoryFilter) return false;
       return true;
     });
@@ -288,8 +288,8 @@ export default function Heatmap() {
                     <p className="font-semibold text-[var(--text-primary)] capitalize">{selectedReport.status}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-[var(--bg-secondary)]">
-                    <p className="text-[var(--text-tertiary)] text-xs mb-0.5">Ward</p>
-                    <p className="font-semibold text-[var(--text-primary)]">{selectedReport.ward_id}</p>
+                    <p className="text-[var(--text-tertiary)] text-xs mb-0.5">Address</p>
+                    <p className="font-semibold text-[var(--text-primary)]">{selectedReport.address}</p>
                   </div>
                 </div>
               </Card>

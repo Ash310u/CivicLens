@@ -1,38 +1,15 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import StatusChip from '@/components/common/StatusChip';
-import { MOCK_REPORTS, WASTE_CATEGORIES } from '@/data/mockData';
+import { WASTE_CATEGORIES } from '@/data/mockData';
+import { useTheme } from '@/context/ThemeContext';
+import { useGetReportsQuery } from '@/store/api/reportsApi';
 import {
-  Search, Filter, Clock, MapPin, AlertTriangle, CheckCircle,
-  Calendar, ChevronDown, X, Layers, List, SlidersHorizontal,
-  RefreshCw, TrendingUp, Eye
+  Search, Filter, Clock, MapPin, CheckCircle,
+  Layers, List, SlidersHorizontal, RefreshCw, Eye
 } from 'lucide-react';
-
-// ─── Extended mock data with date-spread ─────────────────────────────
-const TODAY = new Date('2026-04-09T00:00:00Z');
-
-function daysAgo(n) {
-  const d = new Date(TODAY);
-  d.setDate(d.getDate() - n);
-  return d.toISOString();
-}
-
-const ALL_REPORTS = [
-  ...MOCK_REPORTS,
-  // Reports spread across time windows for filter demo
-  { id: 'CLR-2026-021', citizen_id: '22', citizen_name: 'Kavya S.', address: 'W-14', city: 'Bangalore', image_url: '', category: 'plastic_waste', severity: 'HIGH', status: 'pending', description: 'Plastic heap near school gate', gps_lat: 12.9701, gps_lng: 77.5914, created_at: daysAgo(1), resolved_at: null },
-  { id: 'CLR-2026-022', citizen_id: '23', citizen_name: 'Manoj K.', address: 'W-16', city: 'Bangalore', image_url: '', category: 'wet_waste', severity: 'MEDIUM', status: 'resolved', description: 'Food waste behind market stalls', gps_lat: 12.9672, gps_lng: 77.6035, created_at: daysAgo(2), resolved_at: daysAgo(1) },
-  { id: 'CLR-2026-023', citizen_id: '24', citizen_name: 'Sheela R.', address: 'W-18', city: 'Bangalore', image_url: '', category: 'e_waste', severity: 'LOW', status: 'pending', description: 'Broken electronics near compound wall', gps_lat: 12.9525, gps_lng: 77.5845, created_at: daysAgo(3), resolved_at: null },
-  { id: 'CLR-2026-024', citizen_id: '25', citizen_name: 'Rajan V.', address: 'W-22', city: 'Bangalore', image_url: '', category: 'construction_debris', severity: 'HIGH', status: 'overdue', description: 'Construction rubble blocking road', gps_lat: 12.9462, gps_lng: 77.6195, created_at: daysAgo(10), resolved_at: null },
-  { id: 'CLR-2026-025', citizen_id: '26', citizen_name: 'Asha M.', address: 'W-14', city: 'Bangalore', image_url: '', category: 'mixed_waste', severity: 'MEDIUM', status: 'resolved', description: 'Mixed household garbage at lane end', gps_lat: 12.9718, gps_lng: 77.5952, created_at: daysAgo(15), resolved_at: daysAgo(14) },
-  { id: 'CLR-2026-026', citizen_id: '27', citizen_name: 'Farhan A.', address: 'W-12', city: 'Bangalore', image_url: '', category: 'hazardous_waste', severity: 'CRITICAL', status: 'escalated', description: 'Chemical barrels dumped near water source', gps_lat: 12.9595, gps_lng: 77.6075, created_at: daysAgo(20), resolved_at: null },
-  { id: 'CLR-2026-027', citizen_id: '28', citizen_name: 'Bhavna T.', address: 'W-16', city: 'Bangalore', image_url: '', category: 'plastic_waste', severity: 'LOW', status: 'resolved', description: 'Plastic bottles scattered near park', gps_lat: 12.9655, gps_lng: 77.6012, created_at: daysAgo(45), resolved_at: daysAgo(44) },
-  { id: 'CLR-2026-028', citizen_id: '29', citizen_name: 'Srinath G.', address: 'W-18', city: 'Bangalore', image_url: '', category: 'biomedical_waste', severity: 'CRITICAL', status: 'pending', description: 'Medical sharps near footpath', gps_lat: 12.9535, gps_lng: 77.5835, created_at: daysAgo(60), resolved_at: null },
-  { id: 'CLR-2026-029', citizen_id: '30', citizen_name: 'Padma S.', address: 'W-22', city: 'Bangalore', image_url: '', category: 'dry_waste', severity: 'LOW', status: 'resolved', description: 'Paper and cardboard waste at corner', gps_lat: 12.9478, gps_lng: 77.6172, created_at: daysAgo(75), resolved_at: daysAgo(74) },
-  { id: 'CLR-2026-030', citizen_id: '31', citizen_name: 'Gopal N.', address: 'W-14', city: 'Bangalore', image_url: '', category: 'wet_waste', severity: 'HIGH', status: 'pending', description: 'Rotting vegetables near market lane', gps_lat: 12.9708, gps_lng: 77.5924, created_at: daysAgo(0), resolved_at: null },
-];
 
 // ─── Time range config ────────────────────────────────────────────────
 const TIME_RANGES = [
@@ -73,7 +50,7 @@ function isResolved(report) {
 
 function formatRelativeTime(dateStr) {
   const date = new Date(dateStr);
-  const now = TODAY;
+  const now = new Date();
   const diffMs = now - date;
   const diffH = Math.floor(diffMs / 3600000);
   const diffD = Math.floor(diffMs / 86400000);
@@ -84,19 +61,36 @@ function formatRelativeTime(dateStr) {
   return diffM === 1 ? '1 month ago' : `${diffM} months ago`;
 }
 
-function getStatusColor(status) {
-  const map = {
-    pending: '#f59e0b',
-    'in-progress': '#3b82f6',
-    overdue: '#ef4444',
-    escalated: '#ec4899',
-    resolved: '#22c55e',
-  };
-  return map[status] || '#94a3b8';
+// ─── UI ID formatter ─────────────────────────────────────────────────
+function formatDisplayId(address, id) {
+  // Strip non-alphanumeric, take first 3-5 uppercase chars from address
+  const prefix = (address || '')
+    .replace(/[^a-zA-Z0-9]/g, '')
+    .slice(0, 4)
+    .toUpperCase();
+  // Take the last segment of the id (e.g. '021' from 'CLR-2026-021', or just the raw id)
+  const suffix = String(id).split('-').pop();
+  return prefix ? `${prefix}-${suffix}` : String(id);
+}
+
+// ─── Address resolver ─────────────────────────────────────────────────
+function resolveAddress(report) {
+  return (
+    report.ward_name ||
+    report.location?.address ||
+    report.location?.ward ||
+    report.address ||
+    report.ward_id ||
+    report.ward ||
+    (report.city ? `${report.city}` : null) ||
+    null
+  );
 }
 
 // ─── Main Component ───────────────────────────────────────────────────
 export default function ReportQueue() {
+  const { theme } = useTheme();
+  const { data: reportsResponse, isLoading, isFetching, isError, refetch } = useGetReportsQuery();
   const [timeRange, setTimeRange] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -107,12 +101,42 @@ export default function ReportQueue() {
   const listRef = useRef(null);
   const reportRefs = useRef({});
 
+
+  const reports = useMemo(() => {
+    const raw = Array.isArray(reportsResponse)
+      ? reportsResponse
+      : Array.isArray(reportsResponse?.data)
+        ? reportsResponse.data
+        : Array.isArray(reportsResponse?.reports)
+          ? reportsResponse.reports
+          : [];
+
+    return raw.map((report, index) => {
+      const rawId = report.id || report._id || `report-${index}`;
+      const address = resolveAddress(report) || 'Location N/A';
+      return {
+        ...report,
+        id: rawId,
+        address,
+        category: report.category || 'mixed_waste',
+        severity: report.severity || 'LOW',
+        status: report.status || 'pending',
+        description: report.description || 'No description provided',
+        citizen_name: report.citizen_name || report.reporter_name || report.citizen?.name || 'Anonymous',
+        gps_lat: Number(report.gps_lat ?? report.latitude ?? report.location?.lat ?? 12.965),
+        gps_lng: Number(report.gps_lng ?? report.longitude ?? report.location?.lng ?? 77.6),
+        created_at: report.created_at || report.createdAt || new Date().toISOString(),
+        resolved_at: report.resolved_at || report.resolvedAt || null,
+      };
+    });
+  }, [reportsResponse]);
+
   // ── Filter logic ──────────────────────────────────────────────────
-  const filtered = ALL_REPORTS.filter(r => {
+  const filtered = reports.filter(r => {
     // Time range
     const range = TIME_RANGES.find(t => t.key === timeRange);
     if (range && range.days !== Infinity) {
-      const age = (TODAY - new Date(r.created_at)) / 86400000;
+      const age = (new Date() - new Date(r.created_at)) / 86400000;
       if (range.key === 'today') {
         if (Math.floor(age) > 0) return false;
       } else {
@@ -149,7 +173,7 @@ export default function ReportQueue() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
+    <div className="flex flex-col h-full overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
 
       {/* ── Top Bar ─────────────────────────────────────────────── */}
       <div className="flex-shrink-0 px-4 pt-4 pb-3 border-b border-[var(--border-subtle)]"
@@ -195,6 +219,13 @@ export default function ReportQueue() {
             >
               <SlidersHorizontal size={13} />
               Filters
+            </button>
+            <button
+              onClick={refetch}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all border bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border-subtle)] hover:border-civic-500"
+            >
+              <RefreshCw size={13} className={isFetching ? 'animate-spin' : ''} />
+              Refresh
             </button>
           </div>
         </div>
@@ -285,7 +316,12 @@ export default function ReportQueue() {
             zoomControl={true}
           >
             <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              key={theme}
+              url={
+                theme === 'dark'
+                  ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+                  : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+              }
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
               subdomains="abcd"
               maxZoom={20}
@@ -297,6 +333,7 @@ export default function ReportQueue() {
               const isSelected = selectedReport === report.id;
               const color = resolved ? '#22c55e' : '#ef4444';
               const radius = isSelected ? 14 : report.severity === 'CRITICAL' ? 11 : report.severity === 'HIGH' ? 9 : 7;
+              const categoryMeta = WASTE_CATEGORIES[report.category];
 
               return (
                 <CircleMarker
@@ -320,8 +357,8 @@ export default function ReportQueue() {
                       </div>
                       <p className="text-gray-700 mb-1 font-medium leading-tight">{report.description}</p>
                       <div className="flex items-center gap-1.5 text-gray-500">
-                        <span>{WASTE_CATEGORIES[report.category]?.icon}</span>
-                        <span>{WASTE_CATEGORIES[report.category]?.label}</span>
+                        <span>{categoryMeta?.icon || '🗑️'}</span>
+                        <span>{categoryMeta?.label || report.category}</span>
                         <span>·</span>
                         <span className="font-bold" style={{ color: SEVERITY_COLORS[report.severity] }}>{report.severity}</span>
                       </div>
@@ -390,7 +427,28 @@ export default function ReportQueue() {
             </div>
           </div>
 
-          {filtered.length === 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center h-64 text-center px-4">
+              <div className="w-12 h-12 rounded-full bg-[var(--bg-tertiary)] flex items-center justify-center mb-3">
+                <RefreshCw size={20} className="text-[var(--text-tertiary)] animate-spin" />
+              </div>
+              <p className="text-sm font-medium text-[var(--text-secondary)]">Loading reports</p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-1">Fetching latest queue data...</p>
+            </div>
+          ) : isError ? (
+            <div className="flex flex-col items-center justify-center h-64 text-center px-4">
+              <div className="w-12 h-12 rounded-full bg-[var(--bg-tertiary)] flex items-center justify-center mb-3">
+                <Filter size={20} className="text-[var(--text-tertiary)]" />
+              </div>
+              <p className="text-sm font-medium text-[var(--text-secondary)]">Failed to load reports</p>
+              <button
+                onClick={refetch}
+                className="mt-2 px-3 py-1.5 text-xs rounded-lg bg-civic-500 text-white font-medium"
+              >
+                Retry
+              </button>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-center px-4">
               <div className="w-12 h-12 rounded-full bg-[var(--bg-tertiary)] flex items-center justify-center mb-3">
                 <Filter size={20} className="text-[var(--text-tertiary)]" />
@@ -429,7 +487,13 @@ export default function ReportQueue() {
                             boxShadow: `0 0 6px ${resolved ? '#22c55e80' : '#ef444480'}`
                           }}
                         />
-                        <span className="font-mono text-[10px] text-[var(--text-tertiary)] font-semibold">{report.id}</span>
+                        <span
+                          className="font-mono text-[10px] font-bold tracking-wide"
+                          style={{ color: resolved ? '#22c55e' : '#f87171' }}
+                          title={`Full ID: ${report.id}`}
+                        >
+                          {formatDisplayId(report.address, report.id)}
+                        </span>
                       </div>
                       <span
                         className="text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0"

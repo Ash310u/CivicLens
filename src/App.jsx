@@ -25,6 +25,8 @@ import ForgotPassword from '@/pages/auth/ForgotPassword';
 // Citizen Pages
 import TopDashboard from '@/pages/citizen/TopDashboard';
 import ReportDetails from '@/pages/citizen/ReportDetails';
+import Heatmap from '@/pages/citizen/Heatmap';
+import Campaigns from '@/pages/citizen/Campaigns';
 
 import DisposalLocator from '@/pages/citizen/DisposalLocator';
 import BulkPickup from '@/pages/citizen/BulkPickup';
@@ -71,6 +73,16 @@ function AppRoutes() {
         <Route path={ROUTES.login} element={<Login />} />
         <Route path={ROUTES.signup} element={<Signup />} />
         <Route path={ROUTES.forgotPassword} element={<ForgotPassword />} />
+      </Route>
+
+      {/* Shared Dashboard Pages */}
+      <Route element={<ProtectedRoute allowedRoles={['citizen', 'authority', 'admin']}><DashboardLayout /></ProtectedRoute>}>
+        <Route path={ROUTES.heatmap} element={<Heatmap />} />
+      </Route>
+
+      {/* Citizen Shared Pages */}
+      <Route element={<ProtectedRoute allowedRoles={['citizen']}><DashboardLayout /></ProtectedRoute>}>
+        <Route path={ROUTES.campaigns} element={<Campaigns />} />
       </Route>
 
       {/* Citizen Dashboard */}

@@ -8,7 +8,7 @@ export default function DashboardLayout() {
       <Navbar />
       <div className="flex pt-16">
         <Sidebar />
-        <main className="flex-1 h-[calc(100vh-4rem)] overflow-auto">
+        <main className="flex-1 h-[calc(100vh-4rem)] overflow-hidden">
           <Outlet />
         </main>
       </div>

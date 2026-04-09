@@ -27,11 +27,21 @@ function normalizeUser(user) {
   if (user.id !== undefined && user.id !== null) id = String(user.id);
   else if (user.userId !== undefined && user.userId !== null) id = String(user.userId);
 
+  const address =
+    user.address ??
+    user.ward_id ??
+    user.wardId ??
+    user.ward ??
+    null;
+
   return {
     ...user,
     id,
     role: user.role || 'citizen',
-    ward_id: user.ward_id ?? user.wardId ?? user.ward ?? null,
+    // Normalize ward/address so all pages can rely on user.address,
+    // while keeping ward_id as a backward-compatible alias.
+    address,
+    ward_id: address,
     city_id: user.city_id ?? user.cityId ?? user.city ?? null,
     org_id: user.org_id ?? user.orgId ?? null,
     impact_score: user.impact_score ?? user.impactScore ?? 0,

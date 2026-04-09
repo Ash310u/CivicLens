@@ -8,9 +8,14 @@ import { ROUTES } from '@/lib/routes';
 
 export default function ReportDetails() {
   const { id } = useParams();
-  const report = MOCK_REPORTS.find(r => r.id === id) || MOCK_REPORTS[0];
+  const report = MOCK_REPORTS.find((r) => r.id === id) || MOCK_REPORTS[0];
   const cat = WASTE_CATEGORIES[report.category];
-  const addressText = report.addressText || report.address_text || report.location || report.ward_id || 'N/A';
+  const addressText =
+    report.addressText ||
+    report.address_text ||
+    report.location ||
+    report.address ||
+    'N/A';
   const latitude = Number(report.latitude ?? report.gps_lat);
   const longitude = Number(report.longitude ?? report.gps_lng);
   const hasCoordinates = Number.isFinite(latitude) && Number.isFinite(longitude);
