@@ -494,6 +494,3 @@
   border-radius: var(--radius-card);
 }
 
-.dark .leaflet-tile-pane {
-  filter: brightness(0.7) contrast(1.2) saturate(0.8);
-}

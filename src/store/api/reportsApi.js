@@ -4,6 +4,19 @@ const REPORTS_PATH = '/api/reports';
 
 export const reportsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getReports: builder.query({
+      query: () => ({
+        url: REPORTS_PATH,
+        method: 'GET',
+      }),
+      providesTags: (result = []) => [
+        { type: 'Report', id: 'LIST' },
+        ...result
+          .filter((report) => report?.id !== undefined && report?.id !== null)
+          .map((report) => ({ type: 'Report', id: report.id })),
+      ],
+    }),
+
     getReportById: builder.query({
       query: (id) => ({
         url: `${REPORTS_PATH}/${id}`,
@@ -47,6 +60,7 @@ export const reportsApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetReportsQuery,
   useGetReportByIdQuery,
   useCreateReportMutation,
   useUpdateReportMutation,

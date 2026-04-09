@@ -16,8 +16,6 @@ const menusByRole = {
   citizen: [
     { section: 'Main', items: [
       { label: 'Dashboard', icon: LayoutDashboard, href: ROUTES.citizen.home },
-      { label: 'Report Waste', icon: Camera, href: ROUTES.citizen.report },
-      { label: 'My Reports', icon: ClipboardList, href: ROUTES.citizen.reports },
     ]},
     { section: 'Explore', items: [
       { label: 'Live Heatmap', icon: MapPin, href: ROUTES.heatmap },
